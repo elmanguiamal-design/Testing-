@@ -18,7 +18,7 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 300px;
+      width: 350px;
       display: none;
     }
     .login-box.active, .dashboard.active {
@@ -42,6 +42,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-top: 10px;
     }
     button:hover {
       background: #0056b3;
@@ -61,11 +62,19 @@
       color: white;
     }
     .logout {
-      margin-top: 15px;
       background: #dc3545;
     }
     .logout:hover {
       background: #a71d2a;
+    }
+    .edit {
+      background: #28a745;
+    }
+    .edit:hover {
+      background: #1e7e34;
+    }
+    .save {
+      background: orange;
     }
   </style>
 </head>
@@ -74,66 +83,4 @@
   <!-- Login Box -->
   <div class="login-box active" id="loginBox">
     <h2>DANHS Login</h2>
-    <input type="text" id="lrn" placeholder="Enter LRN">
-    <input type="text" id="fullname" placeholder="Enter Full Name">
-    <input type="password" id="password" placeholder="Enter Password">
-    <button onclick="login()">Login</button>
-  </div>
-
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard">
-    <h2>Welcome, <span id="studentName"></span></h2>
-    <h3>Grade Results</h3>
-    <table>
-      <tr>
-        <th>Subject</th>
-        <th>1st Quarter</th>
-        <th>2nd Quarter</th>
-        <th>3rd Quarter</th>
-        <th>4th Quarter</th>
-      </tr>
-      <tr>
-        <td>Math</td>
-        <td>90</td>
-        <td>88</td>
-        <td>92</td>
-        <td>95</td>
-      </tr>
-      <tr>
-        <td>English</td>
-        <td>85</td>
-        <td>87</td>
-        <td>89</td>
-        <td>90</td>
-      </tr>
-    </table>
-    <button class="logout" onclick="logout()">Logout</button>
-  </div>
-
-  <script>
-    function login() {
-      const lrn = document.getElementById("lrn").value;
-      const fullname = document.getElementById("fullname").value;
-      const password = document.getElementById("password").value;
-
-      // Temporary login (Owner: Elman)
-      if (lrn === "admin" && fullname === "Elman" && password === "admin123") {
-        document.getElementById("loginBox").classList.remove("active");
-        document.getElementById("dashboard").classList.add("active");
-        document.getElementById("studentName").innerText = fullname;
-      } else {
-        alert("Invalid LRN, Name, or Password. Try again!");
-      }
-    }
-
-    function logout() {
-      document.getElementById("dashboard").classList.remove("active");
-      document.getElementById("loginBox").classList.add("active");
-      document.getElementById("lrn").value = "";
-      document.getElementById("fullname").value = "";
-      document.getElementById("password").value = "";
-    }
-  </script>
-
-</body>
-</html>
+    <input type="text" id="lrn

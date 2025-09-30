@@ -1,184 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>DANHS Portal</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .login-box, .dashboard {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 350px;
-      display: none;
-    }
-    .login-box.active, .dashboard.active {
-      display: block;
-    }
-    h2 {
-      text-align: center;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background: #007bff;
-      color: white;
-    }
-    .logout {
-      background: #dc3545;
-    }
-    .logout:hover {
-      background: #a71d2a;
-    }
-    .edit {
-      background: #28a745;
-    }
-    .edit:hover {
-      background: #1e7e34;
-    }
-    .save {
-      background: orange;
-    }
-  </style>
-</head>
-<body>
+<script>
+  let isAdmin = false;
 
-  <!-- Login Box -->
-  <div class="login-box active" id="loginBox">
-    <h2>DANHS Login</h2>
-    <input type="text" id="lrn" placeholder="Enter LRN">
-    <input type="text" id="fullname" placeholder="Enter Full Name">
-    <input type="password" id="password" placeholder="Enter Password">
-    <button onclick="login()">Login</button>
-  </div>
+  function login() {
+    const lrn = document.getElementById("lrn").value.trim();
+    const fullname = document.getElementById("fullname").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-  <!-- Dashboard -->
-  <div class="dashboard" id="dashboard">
-    <h2>Welcome, <span id="studentName"></span></h2>
-    <h3>Grade Results</h3>
-    <table id="gradesTable">
-      <tr>
-        <th>Subject</th>
-        <th>1st Quarter</th>
-        <th>2nd Quarter</th>
-        <th>3rd Quarter</th>
-        <th>4th Quarter</th>
-      </tr>
-      <tr>
-        <td>Math</td>
-        <td contenteditable="false">90</td>
-        <td contenteditable="false">88</td>
-        <td contenteditable="false">92</td>
-        <td contenteditable="false">95</td>
-      </tr>
-      <tr>
-        <td>English</td>
-        <td contenteditable="false">85</td>
-        <td contenteditable="false">87</td>
-        <td contenteditable="false">89</td>
-        <td contenteditable="false">90</td>
-      </tr>
-    </table>
+    // Check if admin
+    if (lrn === "admin" && fullname === "Elman" && password === "admin123") {
+      isAdmin = true;
+    } else {
+      isAdmin = false;
+    }
 
-    <button id="editBtn" class="edit" style="display:none;" onclick="enableEdit()">Edit Grades</button>
-    <button id="saveBtn" class="save" style="display:none;" onclick="saveGrades()">Save Grades</button>
-    <button class="logout" onclick="logout()">Logout</button>
-  </div>
+    // Allow anyone with name + password to login
+    if (fullname && password) {
+      document.getElementById("loginBox").classList.remove("active");
+      document.getElementById("dashboard").classList.add("active");
+      document.getElementById("studentName").innerText = fullname;
 
-  <script>
-    let isAdmin = false;
-
-    function login() {
-      const lrn = document.getElementById("lrn").value.trim();
-      const fullname = document.getElementById("fullname").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      // If admin logs in
-      if (lrn === "admin" && fullname === "Elman" && password === "admin123") {
-        isAdmin = true;
+      // Show edit button only if admin
+      if (isAdmin) {
         document.getElementById("editBtn").style.display = "block";
       } else {
-        isAdmin = false;
-      }
-
-      // Allow anyone with info to login (viewer mode)
-      if (fullname && password) {
-        document.getElementById("loginBox").classList.remove("active");
-        document.getElementById("dashboard").classList.add("active");
-        document.getElementById("studentName").innerText = fullname;
-      } else {
-        alert("Please enter your Full Name and Password.");
-      }
-    }
-
-    function logout() {
-      document.getElementById("dashboard").classList.remove("active");
-      document.getElementById("loginBox").classList.add("active");
-      document.getElementById("lrn").value = "";
-      document.getElementById("fullname").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("editBtn").style.display = "none";
-      document.getElementById("saveBtn").style.display = "none";
-    }
-
-    function enableEdit() {
-      if (isAdmin) {
-        const cells = document.querySelectorAll("#gradesTable td");
-        cells.forEach(cell => {
-          if (cell.innerText !== "Math" && cell.innerText !== "English") {
-            cell.contentEditable = "true";
-          }
-        });
         document.getElementById("editBtn").style.display = "none";
-        document.getElementById("saveBtn").style.display = "block";
       }
+    } else {
+      alert("Please enter your Full Name and Password.");
     }
+  }
 
-    function saveGrades() {
+  function logout() {
+    document.getElementById("dashboard").classList.remove("active");
+    document.getElementById("loginBox").classList.add("active");
+    document.getElementById("lrn").value = "";
+    document.getElementById("fullname").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("editBtn").style.display = "none";
+    document.getElementById("saveBtn").style.display = "none";
+  }
+
+  function enableEdit() {
+    if (isAdmin) {
       const cells = document.querySelectorAll("#gradesTable td");
-      cells.forEach(cell => cell.contentEditable = "false");
-      alert("Grades saved (but only locally). Refresh will reset them.");
-      document.getElementById("editBtn").style.display = "block";
-      document.getElementById("saveBtn").style.display = "none";
+      cells.forEach((cell, i) => {
+        if (i !== 0 && cell.innerText !== "Math" && cell.innerText !== "English") {
+          cell.contentEditable = "true";
+        }
+      });
+      document.getElementById("editBtn").style.display = "none";
+      document.getElementById("saveBtn").style.display = "block";
     }
-  </script>
+  }
 
-</body>
-</html>
+  function saveGrades() {
+    const cells = document.querySelectorAll("#gradesTable td");
+    cells.forEach(cell => cell.contentEditable = "false");
+    alert("Grades saved (temporarily, refresh will reset).");
+    document.getElementById("editBtn").style.display = "block";
+    document.getElementById("saveBtn").style.display = "none";
+  }
+      </script>

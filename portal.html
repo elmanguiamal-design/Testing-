@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; }
+    .box { background: white; padding: 20px; border-radius: 10px; width: 350px; margin: 50px auto; }
+    input, button { width: 90%; padding: 10px; margin: 5px 0; }
+    button { background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #2980b9; }
+    table { margin: 20px auto; border-collapse: collapse; width: 80%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background: #3498db; color: white; }
+    .editBtn { background: #f39c12; }
+    .saveBtn { background: #27ae60; }
+  </style>
+</head>
+<body>
+
+<div class="box" id="loginBox">
+  <h2>Login</h2>
+  <input type="text" id="lrn" placeholder="Enter LRN"><br>
+  <input type="text" id="name" placeholder="Enter Full Name"><br>
+  <input type="password" id="password" placeholder="Enter Password"><br>
+  <button onclick="login()">Login</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<div class="box" id="gradesBox" style="display:none;">
+  <h2>Welcome, <span id="studentName"></span></h2>
+  <p><b>LRN:</b> <span id="studentLRN"></span></p>
+  <h3>Grades:</h3>
+  <table id="gradesTable"></table>
+  <div id="adminPanel" style="display:none;">
+    <button class="saveBtn" onclick="saveGrades()">Save Changes</button>
+  </div>
+</div>
+
+<script>
+  // Fake student data
+  const students = [
+    { lrn: "1234567890", name: "Juan Dela Cruz", password: "1234", role: "student",
+      grades: { "Math Q1": 90, "Math Q2": 85, "English Q1": 88, "English Q2": 92 } },
+    { lrn: "9876543210", name: "Maria Santos", password: "abcd", role: "student",
+      grades: { "Math Q1": 95, "Math Q2": 91, "English Q1": 89, "English Q2": 94 } },
+    { lrn: "0000", name: "Elman Admin", password: "admin", role: "admin",
+      grades: {} }
+  ];
+
+  let currentUser = null;
+
+  function login() {
+    let lrn = document.getElementById("lrn").value;
+    let name = document.getElementById("name").value;
+    let password = document.getElementById("password").value;
+    let error = document.getElementById("error");
+
+    let user = students.find(s => s.lrn === lrn && s.name === name && s.password === password);
+
+    if (user) {
+      currentUser = user;
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("gradesBox").style.display = "block";
+      document.getElementById("studentName").textContent = user.name;
+      document.getElementById("studentLRN").textContent = user.lrn;
+
+      renderGrades(user);
+      if (user.role === "admin") {
+        document.getElementById("adminPanel").style.display = "block";
+      }
+    } else {
+      error.textContent = "Invalid LRN, Name, or Password!";
+    }
+  }
+
+  function renderGrades(user) {
+    let table = document.getElementById("gradesTable");
+    table.innerHTML = "";
+    let header = "<tr><th>Subject</th><th>Grade</th></tr>";
+    table.innerHTML = header;
+
+    for (let subject in user.grades) {
+      let grade = user.grades[subject];
+      let editable = currentUser.role === "admin" ? 
+        `<input type='number' value='${grade}' id='${user.lrn}_${subject}' style='width:60px;'>` 
+        : grade;
+      let row = `<tr><td>${subject}</td><td>${editable}</td></tr>`;
+      table.innerHTML += row;
+    }
+  }
+
+  function saveGrades() {
+    if (currentUser.role === "admin") {
+      students.forEach(s => {
+        for (let subject in s.grades) {
+          let input = document.getElementById(s.lrn + "_" + subject);
+          if (input) s.grades[subject] = parseInt(input.value) || s.grades[subject];
+        }
+      });
+      alert("Grades updated (temporary – not saved permanently yet).");
+    }
+  }
+</script>
+
+</body>
+</html>

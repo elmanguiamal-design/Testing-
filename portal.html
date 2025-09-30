@@ -1,106 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Student Portal</title>
+  <meta charset="UTF-8">
+  <title>DANHS Student Portal</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; }
-    .box { background: white; padding: 20px; border-radius: 10px; width: 350px; margin: 50px auto; }
-    input, button { width: 90%; padding: 10px; margin: 5px 0; }
-    button { background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #2980b9; }
-    table { margin: 20px auto; border-collapse: collapse; width: 80%; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background: #3498db; color: white; }
-    .editBtn { background: #f39c12; }
-    .saveBtn { background: #27ae60; }
+    body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; }
+    header { background: #0056b3; color: white; padding: 1rem; text-align: center; }
+    main { padding: 2rem; }
+    .login, .portal { max-width: 400px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    h2 { margin-top: 0; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    table, th, td { border: 1px solid #ccc; }
+    th, td { padding: 8px; text-align: center; }
+    .admin { background: #fff3cd; padding: 1rem; border-radius: 6px; margin-top: 1rem; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Datu Ayunan National High School</h1>
+    <p>Student Portal</p>
+  </header>
+  <main>
+    <!-- Login Form -->
+    <div id="login" class="login">
+      <h2>Login</h2>
+      <input type="text" id="lrn" placeholder="Enter LRN">
+      <input type="text" id="name" placeholder="Enter Full Name">
+      <input type="password" id="password" placeholder="Enter Password">
+      <button onclick="login()">Login</button>
+      <p id="error" style="color:red;"></p>
+    </div>
 
-<div class="box" id="loginBox">
-  <h2>Login</h2>
-  <input type="text" id="lrn" placeholder="Enter LRN"><br>
-  <input type="text" id="name" placeholder="Enter Full Name"><br>
-  <input type="password" id="password" placeholder="Enter Password"><br>
-  <button onclick="login()">Login</button>
-  <p id="error" style="color:red;"></p>
-</div>
+    <!-- Portal Page -->
+    <div id="portal" class="portal" style="display:none;">
+      <h2>Welcome, <span id="studentName"></span></h2>
+      <table id="gradesTable">
+        <tr>
+          <th>Subject</th>
+          <th>Q1</th>
+          <th>Q2</th>
+          <th>Q3</th>
+          <th>Q4</th>
+        </tr>
+      </table>
+      <div id="adminPanel" class="admin" style="display:none;">
+        <h3>Admin Panel: Edit Grades</h3>
+        <input type="text" id="editLRN" placeholder="Student LRN">
+        <input type="text" id="editSubject" placeholder="Subject">
+        <input type="number" id="editQuarter" placeholder="Quarter (1-4)">
+        <input type="number" id="editGrade" placeholder="Grade">
+        <button onclick="editGrade()">Save Grade</button>
+      </div>
+    </div>
+  </main>
 
-<div class="box" id="gradesBox" style="display:none;">
-  <h2>Welcome, <span id="studentName"></span></h2>
-  <p><b>LRN:</b> <span id="studentLRN"></span></p>
-  <h3>Grades:</h3>
-  <table id="gradesTable"></table>
-  <div id="adminPanel" style="display:none;">
-    <button class="saveBtn" onclick="saveGrades()">Save Changes</button>
-  </div>
-</div>
+  <script>
+    // Example student data
+    let users = [
+      { lrn: "0000", name: "Elman Admin", password: "admin", role: "admin", grades: {} },
+      { lrn: "1234", name: "Juan Dela Cruz", password: "pass123", role: "student",
+        grades: { Math: [90, 85, 88, 92], English: [88, 90, 84, 86] } },
+      { lrn: "5678", name: "Maria Santos", password: "hello", role: "student",
+        grades: { Math: [78, 82, 80, 85], Science: [90, 92, 89, 91] } }
+    ];
 
-<script>
-  // Fake student data
-  const students = [
-    { lrn: "1234567890", name: "Juan Dela Cruz", password: "1234", role: "student",
-      grades: { "Math Q1": 90, "Math Q2": 85, "English Q1": 88, "English Q2": 92 } },
-    { lrn: "9876543210", name: "Maria Santos", password: "abcd", role: "student",
-      grades: { "Math Q1": 95, "Math Q2": 91, "English Q1": 89, "English Q2": 94 } },
-    { lrn: "0000", name: "Elman Admin", password: "admin", role: "admin",
-      grades: {} }
-  ];
+    let currentUser = null;
 
-  let currentUser = null;
+    function login() {
+      const lrn = document.getElementById("lrn").value;
+      const name = document.getElementById("name").value;
+      const password = document.getElementById("password").value;
+      const user = users.find(u => u.lrn === lrn && u.name === name && u.password === password);
 
-  function login() {
-    let lrn = document.getElementById("lrn").value;
-    let name = document.getElementById("name").value;
-    let password = document.getElementById("password").value;
-    let error = document.getElementById("error");
+      if (user) {
+        currentUser = user;
+        document.getElementById("login").style.display = "none";
+        document.getElementById("portal").style.display = "block";
+        document.getElementById("studentName").textContent = user.name;
+        loadGrades(user);
 
-    let user = students.find(s => s.lrn === lrn && s.name === name && s.password === password);
-
-    if (user) {
-      currentUser = user;
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("gradesBox").style.display = "block";
-      document.getElementById("studentName").textContent = user.name;
-      document.getElementById("studentLRN").textContent = user.lrn;
-
-      renderGrades(user);
-      if (user.role === "admin") {
-        document.getElementById("adminPanel").style.display = "block";
-      }
-    } else {
-      error.textContent = "Invalid LRN, Name, or Password!";
-    }
-  }
-
-  function renderGrades(user) {
-    let table = document.getElementById("gradesTable");
-    table.innerHTML = "";
-    let header = "<tr><th>Subject</th><th>Grade</th></tr>";
-    table.innerHTML = header;
-
-    for (let subject in user.grades) {
-      let grade = user.grades[subject];
-      let editable = currentUser.role === "admin" ? 
-        `<input type='number' value='${grade}' id='${user.lrn}_${subject}' style='width:60px;'>` 
-        : grade;
-      let row = `<tr><td>${subject}</td><td>${editable}</td></tr>`;
-      table.innerHTML += row;
-    }
-  }
-
-  function saveGrades() {
-    if (currentUser.role === "admin") {
-      students.forEach(s => {
-        for (let subject in s.grades) {
-          let input = document.getElementById(s.lrn + "_" + subject);
-          if (input) s.grades[subject] = parseInt(input.value) || s.grades[subject];
+        if (user.role === "admin") {
+          document.getElementById("adminPanel").style.display = "block";
         }
-      });
-      alert("Grades updated (temporary – not saved permanently yet).");
+      } else {
+        document.getElementById("error").textContent = "Invalid login. Please try again.";
+      }
     }
-  }
-</script>
 
+    function loadGrades(user) {
+      const table = document.getElementById("gradesTable");
+      table.innerHTML = `<tr>
+        <th>Subject</th>
+        <th>Q1</th>
+        <th>Q2</th>
+        <th>Q3</th>
+        <th>Q4</th>
+      </tr>`;
+      for (const subject in user.grades) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${subject}</td>
+          ${user.grades[subject].map(g => `<td>${g}</td>`).join("")}`;
+        table.appendChild(row);
+      }
+    }
+
+    function editGrade() {
+      if (currentUser.role !== "admin") return;
+
+      const lrn = document.getElementById("editLRN").value;
+      const subject = document.getElementById("editSubject").value;
+      const quarter = parseInt(document.getElementById("editQuarter").value);
+      const grade = parseInt(document.getElementById("editGrade").value);
+
+      const student = users.find(u => u.lrn === lrn);
+      if (!student) { alert("Student not found!"); return; }
+
+      if (!student.grades[subject]) student.grades[subject] = [null, null, null, null];
+      student.grades[subject][quarter - 1] = grade;
+
+      if (student.lrn === currentUser.lrn) loadGrades(student);
+      alert("Grade updated successfully!");
+    }
+  </script>
 </body>
 </html>

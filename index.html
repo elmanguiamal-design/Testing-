@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DANHS Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .login-box, .portal {
+      max-width: 400px;
+      margin: 80px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    input, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    .edit-btn {
+      background: #28a745;
+    }
+  </style>
+</head>
+<body>
+
+<div id="login" class="login-box">
+  <h2>Login to DANHS Portal</h2>
+  <input type="text" id="lrn" placeholder="Enter LRN" required>
+  <input type="text" id="fullname" placeholder="Enter Full Name" required>
+  <input type="password" id="password" placeholder="Enter Password" required>
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="portal" class="portal" style="display:none;">
+  <h2>Welcome to DANHS Portal</h2>
+  <p id="welcome"></p>
+  <button onclick="logout()">Logout</button>
+  
+  <div id="grades-section">
+    <h3>Grades</h3>
+    <table id="grades-table">
+      <tr>
+        <th>Subject</th>
+        <th>Q1</th>
+        <th>Q2</th>
+        <th>Q3</th>
+        <th>Q4</th>
+      </tr>
+    </table>
+    <button id="edit-btn" class="edit-btn" style="display:none;" onclick="editGrades()">Edit Grades</button>
+  </div>
+</div>
+
+<script>
+  const defaultGrades = {
+    "Math": ["90", "88", "92", "95"],
+    "English": ["85", "87", "89", "91"],
+    "Science": ["88", "90", "93", "94"],
+    "Filipino": ["86", "84", "88", "90"]

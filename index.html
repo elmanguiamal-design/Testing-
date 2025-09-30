@@ -3,14 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DANHS</title>
+<title>DANHS Grades</title>
 <style>
   body { font-family: Arial; text-align: center; padding: 50px; background: #f0f0f0; }
-  h1 { color: #333; }
+  input, button { padding: 8px; margin: 5px; font-size: 16px; }
+  table { margin: 20px auto; border-collapse: collapse; }
+  th, td { padding: 10px; border: 1px solid #333; }
+  .login { background-color: #008CBA; color: white; border: none; cursor: pointer; }
+  .save { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
 </style>
 </head>
 <body>
 <h1>Welcome to DANHS</h1>
 <p>Created by Enzo</p>
+
+<!-- Login button -->
+<button class="login" onclick="login()">Login as Teacher</button>
+
+<!-- Grades section (hidden until login) -->
+<div id="grades-section" style="display:none;">
+  <h2>Grades</h2>
+  <table id="grades-table">
+    <tr><th>Student</th><th>Grade</th></tr>
+  </table>
+  <h3>Add/Update Grade</h3>
+  <input id="student" placeholder="Student Name">
+  <input id="grade" placeholder="Grade">
+  <button class="save" onclick="updateGrade()">Save Grade</button>
+</div>
+
+<!-- 1️⃣ Firebase libraries (always first) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- 2️⃣ Your JavaScript (login + grades) -->
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyC6-Xua4QGEsjmlz8V6qkWCADrhEZk6RM4",
+    authDomain: "danhs-f3799.firebaseapp.com",
+    databaseURL: "https://danhs-f3799-default-rtdb.firebaseio.com",
+    projectId: "danhs-f3799",
+    storageBucket: "danhs-f3799.appspot.com",
+    messagingSenderId: "16795421135",
+    appId: "1:16795421135:web:e7b6802bc91ec70cf9aaba"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Login function
+  function login() {
+    const email = prompt("Enter your teacher email:");
+    const password = prompt("Enter your password:");
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => {
+        if(email !== 'elmanguiamal@gmail.com') {
+          alert("You are not authorized to edit grades!");
+          return;
+        }
+        alert("Logged in successfully!");
+        document.getElementById('grades-section').style.display = 'block';
+        loadGrades();
+      })
+      .catch(err => alert(err.message));
+  }
+
+  // Load grades from Firebase
+  function loadGrades() {
+    db.ref('grades').on('value', snapshot => {
+      const table = document.getElementById('grades-table');
+      table.innerHTML = "<tr><th>Student</th><th>Grade</th></tr>";
+      snapshot.forEach(snap => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${snap.key}</td><td>${snap.val()}</td>`;
+        table.appendChild(tr);
+      });
+    });
+  }
+
+  // Add or update grade
+  function updateGrade() {
+    const student = document.getElementById('student').value;
+    const grade = document.getElementById('grade').value;
+    if(student && grade) {
+      db.ref('grades/' + student).set(grade)
+        .then(() => alert('Grade saved!'))
+        .catch(err => alert(err.message));
+    } else alert('Fill both fields');
+  }
+</script>
+
 </body>
 </html>

@@ -1,50 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scientific Calculator</title>
   <style>
-    body { text-align: center; font-family: Arial; }
-    #result { width: 220px; height: 40px; margin: 10px; font-size: 20px; text-align: right; }
-    button { width: 50px; height: 50px; margin: 3px; font-size: 18px; }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #222;
+      margin: 0;
+    }
+
+    .calculator {
+      background: #333;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      width: 300px;
+    }
+
+    #result {
+      width: 100%;
+      height: 60px;
+      font-size: 22px;
+      margin-bottom: 15px;
+      text-align: right;
+      padding: 5px;
+      border-radius: 8px;
+      border: none;
+      background: #111;
+      color: #0f0;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      height: 60px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #444;
+      color: #fff;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #666;
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
   </style>
 </head>
 <body>
-  <h2>Calculator</h2>
-  <input type="text" id="result" disabled>
-  <br>
+  <div class="calculator">
+    <input type="text" id="result" disabled>
+    <div class="buttons">
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('/')">÷</button>
 
-  <div>
-    <button onclick="press('7')">7</button>
-    <button onclick="press('8')">8</button>
-    <button onclick="press('9')">9</button>
-    <button onclick="press('/')">÷</button>
-  </div>
-  <div>
-    <button onclick="press('4')">4</button>
-    <button onclick="press('5')">5</button>
-    <button onclick="press('6')">6</button>
-    <button onclick="press('*')">×</button>
-  </div>
-  <div>
-    <button onclick="press('1')">1</button>
-    <button onclick="press('2')">2</button>
-    <button onclick="press('3')">3</button>
-    <button onclick="press('-')">−</button>
-  </div>
-  <div>
-    <button onclick="press('0')">0</button>
-    <button onclick="press('.')">.</button>
-    <button onclick="calculate()">=</button>
-    <button onclick="press('+')">+</button>
-  </div>
-  <div>
-    <button onclick="clearResult()">C</button>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('*')">×</button>
+
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">−</button>
+
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button class="wide" onclick="calculate()">=</button>
+      <button onclick="press('+')">+</button>
+
+      <button onclick="clearResult()">C</button>
+      <button onclick="sqrt()">√</button>
+      <button onclick="power()">^</button>
+      <button onclick="log()">log</button>
+      <button onclick="sin()">sin</button>
+      <button onclick="cos()">cos</button>
+      <button onclick="tan()">tan</button>
+    </div>
   </div>
 
   <script>
     function press(value) {
       document.getElementById("result").value += value;
     }
+
     function calculate() {
       try {
         document.getElementById("result").value = eval(document.getElementById("result").value);
@@ -52,8 +108,46 @@
         document.getElementById("result").value = "Error";
       }
     }
+
     function clearResult() {
       document.getElementById("result").value = "";
+    }
+
+    function sqrt() {
+      try {
+        let val = parseFloat(document.getElementById("result").value);
+        document.getElementById("result").value = Math.sqrt(val);
+      } catch {
+        document.getElementById("result").value = "Error";
+      }
+    }
+
+    function power() {
+      document.getElementById("result").value += "**";
+    }
+
+    function log() {
+      try {
+        let val = parseFloat(document.getElementById("result").value);
+        document.getElementById("result").value = Math.log10(val);
+      } catch {
+        document.getElementById("result").value = "Error";
+      }
+    }
+
+    function sin() {
+      let val = parseFloat(document.getElementById("result").value);
+      document.getElementById("result").value = Math.sin(val * Math.PI / 180);
+    }
+
+    function cos() {
+      let val = parseFloat(document.getElementById("result").value);
+      document.getElementById("result").value = Math.cos(val * Math.PI / 180);
+    }
+
+    function tan() {
+      let val = parseFloat(document.getElementById("result").value);
+      document.getElementById("result").value = Math.tan(val * Math.PI / 180);
     }
   </script>
 </body>
